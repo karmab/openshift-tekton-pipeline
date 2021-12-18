@@ -14,7 +14,7 @@ spec:
  - name: version
    description: version
    type: string
-   default: "table"
+   default: "stable"
  - name: tag
    description: tag
    type: string

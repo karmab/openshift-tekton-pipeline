@@ -34,3 +34,13 @@ oc create -f pipelinerun.yml
 KUBEADMIN_PASSWORD=$(oc get $(oc get pipelinerun -o name | head -1) -o jsonpath='{.status.pipelineResults[0].value}')
 echo $KUBEADMIN_PASSWORD
 ```
+
+# Screenshots
+
+![wizard](01.png)
+
+
+![exec](02.png)
+
+
+![details](03.png)
