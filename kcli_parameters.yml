@@ -1,0 +1,9 @@
+version: stable
+tag: 4.9
+masters: 3
+workers: 0
+numcpus: 16
+memory: 16384
+disk_size: 30
+async: false
+network_type: OVNKubernetes

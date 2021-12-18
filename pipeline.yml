@@ -1,0 +1,172 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+ name: deploy-openshift
+spec:
+ results:
+ - name: kubeadmin-password
+   description: kubeadmin-password
+ params:
+ - name: cluster
+   description: cluster
+   type: string
+   default: "testk"
+ - name: version
+   description: version
+   type: string
+   default: "table"
+ - name: tag
+   description: tag
+   type: string
+   default: "4.9"
+ - name: masters
+   description: masters
+   type: string
+   default: "3"
+ - name: workers
+   description: workers
+   type: string
+   default: "0"
+ - name: numcpus
+   description: numcpus
+   type: string
+   default: "8"
+ - name: memory
+   description: memory
+   type: string
+   default: "8192"
+ - name: disk_size
+   description: disk_size
+   type: string
+   default: "30"
+ - name: network_type
+   description: network_type
+   type: string
+   default: "OVNKubernetes"
+ - name: async
+   description: async
+   type: string
+   default: "true"
+ steps:
+   - name: deploy
+     image: "quay.io/karmab/kcli:latest"
+     env:
+     - name: NAMESPACE
+       value: $(context.taskRun.namespace)
+     - name: CLUSTER
+       value: $(params.cluster)
+     - name: VERSION
+       value: $(params.version)
+     - name: TAG
+       value: $(params.tag)
+     - name: MASTERS
+       value: $(params.masters)
+     - name: WORKERS
+       value: $(params.workers)
+     - name: NUMCPUS
+       value: $(params.numcpus)
+     - name: MEMORY
+       value: $(params.memory)
+     - name: DISK_SIZE
+       value: $(params.disk_size)
+     - name: NETWORK_TYPE
+       value: $(params.network_type)
+     - name: ASYNC
+       value: $(params.async)
+     script: |
+      #!/usr/bin/env bash
+      echo -ne """version: stable
+      tag: 4.9
+      masters: 3
+      workers: 0
+      numcpus: 8
+      memory: 8192
+      disk_size: 30
+      async: false
+      network_type: OVNKubernetes
+      """ > kcli_parameters.yml
+      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
+      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
+      cp /root/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
+     volumeMounts:
+     - mountPath: /root/.kcli
+       name: credentials
+     - mountPath: /root/.kcli/clusters
+       name: cluster-assets
+ volumes:
+ - configMap:
+     defaultMode: 0700
+     name: credentials
+   name: credentials
+ - name: cluster-assets
+   emptyDir: {}
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: deploy-openshift
+spec:
+  description: deploy openshift
+  results:
+  - name: kubeadmin-password
+    description: kubeadmin-password
+    value: $(tasks.deploy-openshift.results.kubeadmin-password)
+  params:
+  - name: cluster
+    type: string
+    default: "testk"
+  - name: version
+    description: version
+    type: string
+    default: "table"
+  - name: tag
+    description: tag
+    type: string
+    default: "4.9"
+  - name: masters
+    description: masters
+    type: string
+    default: "3"
+  - name: workers
+    description: workers
+    type: string
+    default: "0"
+  - name: numcpus
+    description: numcpus
+    type: string
+    default: "8"
+  - name: memory
+    description: memory
+    type: string
+    default: "8192"
+  - name: disk_size
+    description: disk_size
+    type: string
+    default: "30"
+  - name: network_type
+    description: network_type
+    type: string
+    default: "OVNKubernetes"
+  tasks:
+  - name: deploy-openshift
+    taskRef:
+      name: deploy-openshift
+    params:
+    - name: cluster
+      value: $(params.cluster)
+    - name: version
+      value: $(params.version)
+    - name: tag
+      value: $(params.tag)
+    - name: masters
+      value: $(params.masters)
+    - name: workers
+      value: $(params.workers)
+    - name: numcpus
+      value: $(params.numcpus)
+    - name: memory
+      value: $(params.memory)
+    - name: disk_size
+      value: $(params.disk_size)
+    - name: network_type
+      value: $(params.network_type)
