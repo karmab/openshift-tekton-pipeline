@@ -6,6 +6,8 @@ spec:
  results:
  - name: kubeadmin-password
    description: kubeadmin-password
+ - name: hosts-entry
+   description: hosts-entry
  params:
  - name: cluster
    description: cluster
@@ -88,6 +90,7 @@ spec:
       echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
       kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
       cp /root/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
+      grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
       echo "Kubeconfig:"
       cat /root/.kcli/clusters/$CLUSTER/auth/kubeconfig
      volumeMounts:
