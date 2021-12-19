@@ -29,9 +29,13 @@ oc create -f pipelinerun.yml
 
 # Retrieve credentials
 
+Credentials will be available shortly after the pipeline runs, before completion
+
 ```
+CLUSTER=magic
 KUBEADMIN_PASSWORD=$(oc get $(oc get pipelinerun -o name | head -1) -o jsonpath='{.status.pipelineResults[0].value}')
 echo $KUBEADMIN_PASSWORD
+oc cp $(oc get pod -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | head -1):/root/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
 ```
 
 # Screenshots
