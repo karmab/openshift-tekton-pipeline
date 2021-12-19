@@ -152,6 +152,10 @@ spec:
     description: network_type
     type: string
     default: "OVNKubernetes"
+  - name: async
+    description: async
+    type: string
+    default: "false"
   tasks:
   - name: deploy-openshift
     taskRef:
@@ -175,3 +179,5 @@ spec:
       value: $(params.disk_size)
     - name: network_type
       value: $(params.network_type)
+    - name: async
+      value: $(params.async)
