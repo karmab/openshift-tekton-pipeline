@@ -29,14 +29,44 @@ oc create -f pipelinerun.yml
 
 # Retrieve credentials
 
-Credentials will be available shortly after the pipeline runs, before completion
+Credentials will be available shortly after the pipeline runs, before completion.
+
+## Gathering task output
+
+The following command will print all the information needed to access the cluster:
+
+- /etc/hosts entry
+- kubeadmin password
+- full kubeconfig
+
+```
+POD=$(oc get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
+oc logs $POD
+```
+
+## Gathering task results
+
+You can also gather kubeadmin password and the /etc/hosts entry as results of the pipeline
+
+```
+PIPELINERUN=$(oc get pipelinerun --sort-by={'.metadata.creationTimestamp'} -o name | tail -1)
+KUBEADMIN_PASSWORD=$(oc get $PIPELINERUN -o jsonpath='{.status.pipelineResults[0].value}')
+echo $KUBEADMIN_PASSWORD
+```
+
+```
+PIPELINERUN=$(oc get pipelinerun --sort-by={'.metadata.creationTimestamp'} -o name | tail -1
+oc get $PIPELINERUN -o jsonpath='{.status.pipelineResults[1].value}'
+```
+
+Kubeconfig can't be gathered this way (because of the size of the data preventing to store this way)
+
+Note that during a run, if not running in async mode, you can copy kubeconfig with the following command:
 
 ```
 CLUSTER=magic
-KUBEADMIN_PASSWORD=$(oc get $(oc get pipelinerun -o name | head -1) -o jsonpath='{.status.pipelineResults[0].value}')
-echo $KUBEADMIN_PASSWORD
-oc cp $(oc get pod -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | head -1):/root/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
-oc get $(oc get pipelinerun -o name | head -1) -o jsonpath='{.status.pipelineResults[1].value}') >> /etc/hosts
+POD=$(oc get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
+oc cp $POD:/root/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
 ```
 
 # Screenshots

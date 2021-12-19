@@ -75,6 +75,10 @@ spec:
        value: $(params.network_type)
      - name: ASYNC
        value: $(params.async)
+     - name: BLUE
+       value: '\033[0;36m'
+     - name: NC
+       value: '\033[0m'
      script: |
       #!/usr/bin/env bash
       echo -ne """version: stable
@@ -91,7 +95,7 @@ spec:
       kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
       cp /root/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
       grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
-      echo "Kubeconfig:"
+      echo -e "${BLUE}Kubeconfig to use with this cluster:${NC}"
       cat /root/.kcli/clusters/$CLUSTER/auth/kubeconfig
      volumeMounts:
      - mountPath: /root/.kcli
@@ -116,6 +120,9 @@ spec:
   - name: kubeadmin-password
     description: kubeadmin-password
     value: $(tasks.deploy-openshift.results.kubeadmin-password)
+  - name: hosts-entry
+    description: hosts-entry
+    value: $(tasks.deploy-openshift.results.hosts-entry)
   params:
   - name: cluster
     type: string
