@@ -14,7 +14,6 @@ oc new-project $PROJECT
 oc adm policy add-cluster-role-to-user cluster-admin -z pipeline -n $PROJECT
 oc adm policy add-scc-to-user anyuid -z pipeline
 mkdir /tmp/creds
-echo -ne "default:\n client: kubevirt\nkubevirt:\n type: kubevirt\n" > /tmp/creds/config.yml
 cp ~/.ssh/*pub /tmp/creds
 cp openshift_pull.json /tmp/creds
 oc create configmap credentials --from-file=/tmp/creds
