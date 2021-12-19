@@ -46,7 +46,7 @@ spec:
  - name: async
    description: async
    type: string
-   default: "true"
+   default: "false"
  steps:
    - name: deploy
      image: "quay.io/karmab/kcli:latest"
@@ -88,6 +88,8 @@ spec:
       echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
       kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
       cp /root/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
+      echo "Kubeconfig:"
+      cat /root/.kcli/clusters/$CLUSTER/auth/kubeconfig
      volumeMounts:
      - mountPath: /root/.kcli
        name: credentials

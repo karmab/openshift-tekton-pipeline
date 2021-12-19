@@ -8,3 +8,5 @@ spec:
   params:
     - name: cluster
       value: "magic"
+    - name: async
+      value: "false"
