@@ -8,17 +8,32 @@ This repo contains assets to ease deploying openshift on openshift using kubevir
 
 # Configuration
 
+## On kubernetes
+
+```
+PROJECT=myproject
+kubectl config set-context --current --namespace=$PROJECT
+kubectl create -f tekton.yml
+```
+
+## On openshift
+
 ```
 PROJECT=myproject
 oc new-project $PROJECT
 oc adm policy add-cluster-role-to-user cluster-admin -z pipeline -n $PROJECT
 oc adm policy add-scc-to-user anyuid -z pipeline
+```
+
+## On both
+
+```
 mkdir /tmp/creds
 cp ~/.ssh/*pub /tmp/creds
 cp openshift_pull.json /tmp/creds
-oc create configmap credentials --from-file=/tmp/creds
+kubectl create configmap credentials --from-file=/tmp/creds
 rm -rf /tmp/creds
-oc create -f pipeline.yml
+kubectl create -f pipeline.yml
 ```
 
 # Launch a deployment
@@ -26,6 +41,21 @@ oc create -f pipeline.yml
 ```
 oc create -f pipelinerun.yml
 ```
+
+## Parameters
+
+|Parameter         |Default Value  |
+|------------------|---------------|
+|cluster           |testk          |
+|version           |stable         |
+|tag               |4.9            |
+|masters           |3              |
+|workers           |0              |
+|numcpus           |8              |
+|memory            |8192           |
+|disk_size         |30             |
+|network_type      |OVNKubernetes  |
+|async             |false          |
 
 # Retrieve credentials
 
