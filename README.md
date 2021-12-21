@@ -1,10 +1,10 @@
-This repo contains assets to ease deploying openshift on openshift using kubevirt vms through a tekton pipeline
+This repo contains assets to ease deploying openshift on kubernetes/openshift using kubevirt vms, all through a tekton pipeline
 
 # Requisites
 
-- openshift cluster (with admin creds)
-- openshift pipelines and virtualization deployed
-- storage in place
+- kubernetes/openshift cluster (with admin creds)
+- tekton/openshift pipelines and kubevirt/openshift virtualization deployed
+- storage in place (for the disks of the vms)
 
 # Configuration
 
@@ -35,6 +35,8 @@ kubectl create configmap credentials --from-file=/tmp/creds
 rm -rf /tmp/creds
 kubectl create -f pipeline.yml
 ```
+
+Note that the pipeline can easily be extended  with the parameters available [here](https://github.com/karmab/kcli/blob/master/kvirt/openshift/kcli_default.yml)
 
 # Launch a deployment
 
