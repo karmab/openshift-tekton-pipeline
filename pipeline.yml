@@ -91,16 +91,16 @@ spec:
       async: false
       network_type: OVNKubernetes
       """ > kcli_parameters.yml
-      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
-      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/root/.kcli/openshift_pull.json $CLUSTER
-      cp /root/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
+      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/tekton/home/.kcli/openshift_pull.json $CLUSTER
+      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/tekton/home/.kcli/openshift_pull.json $CLUSTER
+      cp /tekton/home/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
       grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
       echo -e "${BLUE}Kubeconfig to use with this cluster:${NC}"
-      cat /root/.kcli/clusters/$CLUSTER/auth/kubeconfig
+      cat /tekton/home/.kcli/clusters/$CLUSTER/auth/kubeconfig
      volumeMounts:
-     - mountPath: /root/.kcli
+     - mountPath: /tekton/home/.kcli
        name: credentials
-     - mountPath: /root/.kcli/clusters
+     - mountPath: /tekton/hom/tekton/hom/tekton/hom/tekton/homeers
        name: cluster-assets
  volumes:
  - configMap:
