@@ -2,30 +2,11 @@ This repo contains assets to ease deploying openshift on kubernetes/openshift us
 
 # Requisites
 
-- kubernetes/openshift cluster (with admin creds)
+- kubernetes/openshift cluster
 - tekton/openshift pipelines and kubevirt/openshift virtualization deployed
 - storage in place (for the disks of the vms)
 
 # Configuration
-
-## On kubernetes
-
-```
-PROJECT=myproject
-kubectl config set-context --current --namespace=$PROJECT
-kubectl create -f tekton.yml
-```
-
-## On openshift
-
-```
-PROJECT=myproject
-oc new-project $PROJECT
-oc adm policy add-cluster-role-to-user cluster-admin -z pipeline -n $PROJECT
-oc adm policy add-scc-to-user anyuid -z pipeline
-```
-
-## On both
 
 ```
 mkdir /tmp/creds
@@ -98,7 +79,7 @@ Note that during a run, if not running in async mode, you can copy kubeconfig wi
 ```
 CLUSTER=magic
 POD=$(oc get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
-oc cp $POD:/root/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
+oc cp $POD:/home/tekton/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
 ```
 
 # Screenshots
