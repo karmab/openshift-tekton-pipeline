@@ -30,6 +30,7 @@ oc create -f pipelinerun.yml
 |Parameter         |Default Value  |
 |------------------|---------------|
 |cluster           |testk          |
+|domain            |karmalabs.com  |
 |version           |stable         |
 |tag               |4.9            |
 |masters           |3              |
@@ -74,20 +75,21 @@ oc get $PIPELINERUN -o jsonpath='{.status.pipelineResults[1].value}'
 
 Kubeconfig can't be gathered this way (because of the size of the data preventing to store this way)
 
-Note that during a run, if not running in async mode, you can copy kubeconfig with the following command:
+Note that during a run, if not running in async mode, you can copy kubeconfig and /etc/hosts with the following commands:
 
 ```
 CLUSTER=magic
 POD=$(oc get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
-oc cp $POD:/home/tekton/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
+oc cp $POD:/tekton/home/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
+oc cp $POD:/etc/hosts hosts.$CLUSTER
 ```
 
 # Screenshots
 
-![wizard](01.png)
+![wizard](img/01.png)
 
 
-![exec](02.png)
+![exec](img/02.png)
 
 
-![details](03.png)
+![details](img/03.png)

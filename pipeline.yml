@@ -13,6 +13,10 @@ spec:
    description: cluster
    type: string
    default: "testk"
+ - name: domain
+   description: domain
+   type: string
+   default: "karmalabs.com"
  - name: version
    description: version
    type: string
@@ -32,11 +36,11 @@ spec:
  - name: numcpus
    description: numcpus
    type: string
-   default: "8"
+   default: "16"
  - name: memory
    description: memory
    type: string
-   default: "8192"
+   default: "32768"
  - name: disk_size
    description: disk_size
    type: string
@@ -57,6 +61,8 @@ spec:
        value: $(context.taskRun.namespace)
      - name: CLUSTER
        value: $(params.cluster)
+     - name: DOMAIN
+       value: $(params.domain)
      - name: VERSION
        value: $(params.version)
      - name: TAG
@@ -81,26 +87,20 @@ spec:
        value: '\033[0m'
      script: |
       #!/usr/bin/env bash
-      echo -ne """version: stable
-      tag: 4.9
-      masters: 3
-      workers: 0
-      numcpus: 16
-      memory: 16384
-      disk_size: 30
-      async: false
-      network_type: OVNKubernetes
-      cluster_network_ipv4: 10.120.0.0/14
+      echo -ne """cluster_network_ipv4: 10.120.0.0/14
       service_network_ipv4: 172.28.0.0/16
       """ > kcli_parameters.yml
-      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=$HOME/.kcli/openshift_pull.json $CLUSTER
-      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=$HOME/.kcli/openshift_pull.json $CLUSTER
+      mkdir /tekton/home/.ssh
+      cp /tekton/home/credentials/*pub /tekton/home/.ssh
+      chmod 600 /tekton/home/.ssh/id_rsa.pub
+      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/tekton/home/credentials/openshift_pull.json $CLUSTER
+      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/tekton/home/credentials/openshift_pull.json $CLUSTER
       cp $HOME/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
       grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
       echo -e "${BLUE}Kubeconfig to use with this cluster:${NC}"
       cat $HOME/.kcli/clusters/$CLUSTER/auth/kubeconfig
      volumeMounts:
-     - mountPath: /tekton/home/.kcli
+     - mountPath: /tekton/home/credentials
        name: credentials
  volumes:
  - configMap:
@@ -125,10 +125,13 @@ spec:
   - name: cluster
     type: string
     default: "testk"
+  - name: domain
+    type: string
+    default: "karmalabs.com"
   - name: version
     description: version
     type: string
-    default: "table"
+    default: "stable"
   - name: tag
     description: tag
     type: string
@@ -144,11 +147,11 @@ spec:
   - name: numcpus
     description: numcpus
     type: string
-    default: "8"
+    default: "16"
   - name: memory
     description: memory
     type: string
-    default: "8192"
+    default: "32768"
   - name: disk_size
     description: disk_size
     type: string
@@ -168,6 +171,8 @@ spec:
     params:
     - name: cluster
       value: $(params.cluster)
+    - name: domain
+      value: $(params.domain)
     - name: version
       value: $(params.version)
     - name: tag

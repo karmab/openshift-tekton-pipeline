@@ -7,6 +7,6 @@ spec:
     name: deploy-openshift
   params:
     - name: cluster
-      value: "magic"
+      value: "newyear"
     - name: async
       value: "false"
