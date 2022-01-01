@@ -85,10 +85,13 @@ spec:
        value: '\033[0;36m'
      - name: NC
        value: '\033[0m'
+     - name: PYTHONUNBUFFERED
+       value: "true"
      script: |
       #!/usr/bin/env bash
       echo -ne """cluster_network_ipv4: 10.120.0.0/14
       service_network_ipv4: 172.28.0.0/16
+      #kubevirt_ignore_node_port: true  
       """ > kcli_parameters.yml
       mkdir /tekton/home/.ssh
       cp /tekton/home/credentials/*pub /tekton/home/.ssh

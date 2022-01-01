@@ -10,3 +10,5 @@ spec:
       value: "newyear"
     - name: async
       value: "false"
+    - name: workers
+      value: "0"
