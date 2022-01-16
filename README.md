@@ -5,7 +5,7 @@ This repo contains assets to ease deploying openshift on kubernetes/openshift us
 - kubernetes/openshift cluster
 - tekton/openshift pipelines and kubevirt/openshift virtualization deployed
 - storage in place (for the disks of the vms)
-- valid pull secret
+- valid [pull secret](https://console.redhat.com/openshift/install/pull-secret)
 - ssh public key
 
 # Configuration
