@@ -14,15 +14,15 @@ This repo contains assets to ease deploying openshift on kubernetes/openshift us
 
 ```
 SSH_PUB_KEY=$(cat $HOME/.ssh/id_rsa.pub)
-sed "s%CHANGE_SSH_PUB_KEY%$SSH_PUB_KEY%" pipeline.yml > mypipeline.yml
+sed "s%CHANGE_SSH_PUB_KEY%$SSH_PUB_KEY%" pipeline.yml.sample > pipeline.yml
 PULL_SECRET=$(cat openshift_pull.json| tr -d [:space:])
-sed -i "s%CHANGE_PULL_SECRET%$PULL_SECRET%" mypipeline.yml
+sed -i "s%CHANGE_PULL_SECRET%$PULL_SECRET%" pipeline.yml
 ```
 
 ## Generate pipeline
 
 ```
-kubectl create -f mypipeline.yml
+kubectl create -f pipeline.yml
 ```
 
 Note that the pipeline can easily be extended  with the parameters available [here](https://github.com/karmab/kcli/blob/master/kvirt/openshift/kcli_default.yml)
