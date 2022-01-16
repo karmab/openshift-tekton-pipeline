@@ -29,13 +29,8 @@ Note that the pipeline can easily be extended  with the parameters available [he
 
 # Launch a deployment
 
-You will need to provide:
-
-- pub key
-- pull secret
-
 ```
-oc create -f pipelinerun.yml
+kubectl create -f pipelinerun.yml
 ```
 
 ## Parameters
@@ -69,8 +64,8 @@ The following command will print all the information needed to access the cluste
 - full kubeconfig
 
 ```
-POD=$(oc get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
-oc logs $POD
+POD=$(kubectl get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
+kubectl logs $POD
 ```
 
 ## Gathering task results
@@ -78,14 +73,14 @@ oc logs $POD
 You can also gather kubeadmin password and the /etc/hosts entry as results of the pipeline
 
 ```
-PIPELINERUN=$(oc get pipelinerun --sort-by={'.metadata.creationTimestamp'} -o name | tail -1)
-KUBEADMIN_PASSWORD=$(oc get $PIPELINERUN -o jsonpath='{.status.pipelineResults[0].value}')
+PIPELINERUN=$(kubectl get pipelinerun --sort-by={'.metadata.creationTimestamp'} -o name | tail -1)
+KUBEADMIN_PASSWORD=$(kubectl get $PIPELINERUN -o jsonpath='{.status.pipelineResults[0].value}')
 echo $KUBEADMIN_PASSWORD
 ```
 
 ```
-PIPELINERUN=$(oc get pipelinerun --sort-by={'.metadata.creationTimestamp'} -o name | tail -1
-oc get $PIPELINERUN -o jsonpath='{.status.pipelineResults[1].value}'
+PIPELINERUN=$(kubectl get pipelinerun --sort-by={'.metadata.creationTimestamp'} -o name | tail -1
+kubectl get $PIPELINERUN -o jsonpath='{.status.pipelineResults[1].value}'
 ```
 
 Kubeconfig can't be gathered this way (because of the size of the data preventing to store this way)
@@ -94,9 +89,9 @@ Note that during a run, if not running in async mode, you can copy kubeconfig an
 
 ```
 CLUSTER=magic
-POD=$(oc get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
-oc cp $POD:/tekton/home/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
-oc cp $POD:/etc/hosts hosts.$CLUSTER
+POD=$(kubectl get pod --sort-by={'.metadata.creationTimestamp'} -o custom-columns=NAME:.metadata.name --no-headers | grep deploy-openshift | tail -1)
+kubectl cp $POD:/tekton/home/.kcli/clusters/$CLUSTER/auth/kubeconfig kubeconfig.$CLUSTER
+kubectl cp $POD:/etc/hosts hosts.$CLUSTER
 ```
 
 # Screenshots
