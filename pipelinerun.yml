@@ -7,8 +7,12 @@ spec:
     name: deploy-openshift
   params:
     - name: cluster
-      value: "newyear"
+      value: 'demo1'
     - name: async
-      value: "false"
+      value: 'false'
     - name: workers
-      value: "0"
+      value: '2'
+    - name: version
+      value: 'nightly'
+    - name: tag
+      value: '4.10'

@@ -9,56 +9,69 @@ spec:
  - name: hosts-entry
    description: hosts-entry
  params:
+ - name: pull_secret
+   description: pull_secret
+   type: string
+ - name: ssh_pub_key
+   description: ssh_pub_key
+   type: string
  - name: cluster
    description: cluster
    type: string
-   default: "testk"
+ - name: cluster
+   description: cluster
+   type: string
+   default: 'testk'
  - name: domain
    description: domain
    type: string
-   default: "karmalabs.com"
+   default: 'karmalabs.com'
  - name: version
    description: version
    type: string
-   default: "stable"
+   default: 'stable'
  - name: tag
    description: tag
    type: string
-   default: "4.9"
+   default: '4.9'
  - name: masters
    description: masters
    type: string
-   default: "3"
+   default: '3'
  - name: workers
    description: workers
    type: string
-   default: "0"
+   default: '0'
  - name: numcpus
    description: numcpus
    type: string
-   default: "16"
+   default: '16'
  - name: memory
    description: memory
    type: string
-   default: "32768"
+   default: '32768'
  - name: disk_size
    description: disk_size
    type: string
-   default: "30"
+   default: '30'
  - name: network_type
    description: network_type
    type: string
-   default: "OVNKubernetes"
+   default: 'OVNKubernetes'
  - name: async
    description: async
    type: string
-   default: "false"
+   default: 'false'
  steps:
    - name: deploy
      image: "quay.io/karmab/kcli:latest"
      env:
      - name: NAMESPACE
        value: $(context.taskRun.namespace)
+     - name: PULL_SECRET
+       value: $(params.pull_secret)
+     - name: SSH_PUB_KEY
+       value: $(params.ssh_pub_key)
      - name: CLUSTER
        value: $(params.cluster)
      - name: DOMAIN
@@ -93,23 +106,16 @@ spec:
       service_network_ipv4: 172.28.0.0/16
       #kubevirt_ignore_node_port: true  
       """ > kcli_parameters.yml
+      echo $PULL_SECRET > openshift_pull.json
       mkdir /tekton/home/.ssh
-      cp /tekton/home/credentials/*pub /tekton/home/.ssh
+      echo $SSH_PUB_KEY > /tekton/home/.ssh/id_rsa.pub
       chmod 600 /tekton/home/.ssh/id_rsa.pub
-      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/tekton/home/credentials/openshift_pull.json $CLUSTER
-      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" -P pull_secret=/tekton/home/credentials/openshift_pull.json $CLUSTER
+      echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
+      kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
       cp $HOME/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
       grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
       echo -e "${BLUE}Kubeconfig to use with this cluster:${NC}"
       cat $HOME/.kcli/clusters/$CLUSTER/auth/kubeconfig
-     volumeMounts:
-     - mountPath: /tekton/home/credentials
-       name: credentials
- volumes:
- - configMap:
-     defaultMode: 0700
-     name: credentials
-   name: credentials
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
@@ -125,53 +131,63 @@ spec:
     description: hosts-entry
     value: $(tasks.deploy-openshift.results.hosts-entry)
   params:
+  - name: pull_secret
+    type: string
+    default: 'CHANGE_PULL_SECRET'
+  - name: ssh_pub_key
+    type: string
+    default: 'CHANGE_SSH_PUB_KEY'
   - name: cluster
     type: string
-    default: "testk"
+    default: 'testk'
   - name: domain
     type: string
-    default: "karmalabs.com"
+    default: 'karmalabs.com'
   - name: version
     description: version
     type: string
-    default: "stable"
+    default: 'stable'
   - name: tag
     description: tag
     type: string
-    default: "4.9"
+    default: '4.9'
   - name: masters
     description: masters
     type: string
-    default: "3"
+    default: '3'
   - name: workers
     description: workers
     type: string
-    default: "0"
+    default: '0'
   - name: numcpus
     description: numcpus
     type: string
-    default: "16"
+    default: '16'
   - name: memory
     description: memory
     type: string
-    default: "32768"
+    default: '32768'
   - name: disk_size
     description: disk_size
     type: string
-    default: "30"
+    default: '30'
   - name: network_type
     description: network_type
     type: string
-    default: "OVNKubernetes"
+    default: 'OVNKubernetes'
   - name: async
     description: async
     type: string
-    default: "false"
+    default: 'false'
   tasks:
   - name: deploy-openshift
     taskRef:
       name: deploy-openshift
     params:
+    - name: pull_secret
+      value: $(params.pull_secret)
+    - name: ssh_pub_key
+      value: $(params.ssh_pub_key)
     - name: cluster
       value: $(params.cluster)
     - name: domain
