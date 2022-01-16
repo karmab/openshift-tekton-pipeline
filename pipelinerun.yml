@@ -7,7 +7,7 @@ spec:
     name: deploy-openshift
   params:
     - name: cluster
-      value: 'demo1'
+      value: 'magic'
     - name: async
       value: 'false'
     - name: workers
