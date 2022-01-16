@@ -5,21 +5,34 @@ This repo contains assets to ease deploying openshift on kubernetes/openshift us
 - kubernetes/openshift cluster
 - tekton/openshift pipelines and kubevirt/openshift virtualization deployed
 - storage in place (for the disks of the vms)
+- valid pull secret
+- ssh public key
 
 # Configuration
 
+## Set default values for pull secret and ssh private key
+
 ```
-mkdir /tmp/creds
-cp ~/.ssh/*pub /tmp/creds
-cp openshift_pull.json /tmp/creds
-kubectl create configmap credentials --from-file=/tmp/creds
-rm -rf /tmp/creds
-kubectl create -f pipeline.yml
+SSH_PUB_KEY=$(cat $HOME/.ssh/id_rsa.pub)
+sed "s%CHANGE_SSH_PUB_KEY%$SSH_PUB_KEY%" pipeline.yml > mypipeline.yml
+PULL_SECRET=$(cat openshift_pull.json| tr -d [:space:])
+sed -i "s%CHANGE_PULL_SECRET%$PULL_SECRET%" mypipeline.yml
+```
+
+## Generate pipeline
+
+```
+kubectl create -f mypipeline.yml
 ```
 
 Note that the pipeline can easily be extended  with the parameters available [here](https://github.com/karmab/kcli/blob/master/kvirt/openshift/kcli_default.yml)
 
 # Launch a deployment
+
+You will need to provide:
+
+- pub key
+- pull secret
 
 ```
 oc create -f pipelinerun.yml
@@ -40,6 +53,8 @@ oc create -f pipelinerun.yml
 |disk_size         |30             |
 |network_type      |OVNKubernetes  |
 |async             |false          |
+|pull_secret       |CHANGEME       |
+|ssh_pub_key       |CHANGEME       |
 
 # Retrieve credentials
 
