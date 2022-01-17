@@ -107,9 +107,9 @@ spec:
       #kubevirt_ignore_node_port: true  
       """ > kcli_parameters.yml
       echo $PULL_SECRET > openshift_pull.json
-      mkdir /tekton/home/.ssh
-      echo $SSH_PUB_KEY > /tekton/home/.ssh/id_rsa.pub
-      chmod 600 /tekton/home/.ssh/id_rsa.pub
+      mkdir $HOME/.ssh
+      echo $SSH_PUB_KEY > $HOME/.ssh/id_rsa.pub
+      chmod 600 $HOME/.ssh/id_rsa.pub
       echo kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
       kcli -n $NAMESPACE create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
       cp $HOME/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
