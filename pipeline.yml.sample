@@ -116,7 +116,7 @@ spec:
       grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
       echo -e "${BLUE}Kubeconfig to use with this cluster:${NC}"
       cat $HOME/.kcli/clusters/$CLUSTER/auth/kubeconfig
-      ./oc create secret generic kubeconfig-$CLUSTER --from-file=$HOME/.kcli/clusters/$CLUSTER/auth/kubeconfig
+      ./oc create secret generic kubeconfig-$CLUSTER --from-file=$HOME/.kcli/clusters/$CLUSTER/auth/kubeconfig --dry-run=client -o yaml | ./oc apply -f -
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
