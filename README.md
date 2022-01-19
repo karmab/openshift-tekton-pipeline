@@ -14,10 +14,10 @@ This repo contains assets to ease deploying openshift on kubernetes/openshift us
 
 ```
 SSH_PUB_KEY=$(cat $HOME/.ssh/id_rsa.pub)
-[ -z $PULL_SECRET ] && echo -e 'Empty PULL_SECRET variable!!!!'
+[ -z $SSH_PUB_KEY ] && echo -e "Empty SSH_PUB_KEY variable" && exit 1
 sed "s%CHANGE_SSH_PUB_KEY%$SSH_PUB_KEY%" pipeline.yml.sample > pipeline.yml
 PULL_SECRET=$(cat openshift_pull.json| tr -d [:space:])
-[ -z $SSH_PUB_KEY ] && echo -e 'Empty SSH_PUB_KEY variable!!!!'
+[ -z $PULL_SECRET ] && echo -e "Empty PULL_SECRET variable" && exit 1
 sed -i "s%CHANGE_PULL_SECRET%$PULL_SECRET%" pipeline.yml
 ```
 
