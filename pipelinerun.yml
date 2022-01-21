@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: deploy-openshift
+  generateName: deploy-openshift-
 spec:
   pipelineRef:
     name: deploy-openshift
