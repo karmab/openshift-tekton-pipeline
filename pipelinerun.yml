@@ -10,9 +10,11 @@ spec:
       value: 'magic'
     - name: async
       value: 'false'
+    - name: masters
+      value: '3'
     - name: workers
       value: '2'
     - name: version
-      value: 'nightly'
+      value: 'stable'
     - name: tag
       value: '4.10'
