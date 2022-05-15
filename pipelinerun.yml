@@ -13,8 +13,10 @@ spec:
     - name: masters
       value: '3'
     - name: workers
-      value: '2'
+      value: '0'
     - name: version
       value: 'stable'
     - name: tag
       value: '4.10'
+    - name: network_type
+      value: 'OpenShiftSDN'
