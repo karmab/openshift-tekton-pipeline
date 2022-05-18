@@ -100,13 +100,14 @@ spec:
        value: '\033[0m'
      - name: PYTHONUNBUFFERED
        value: "true"
+     - name: FIRSTCONSUMER
+       value: "false"
      script: |
       #!/usr/bin/env bash
       mkdir $HOME/.kcli
       echo $SSH_PUB_KEY > $HOME/.kcli/id_rsa.pub
       chmod 600 $HOME/.kcli/id_rsa.pub
-      touch $HOME/.kcli/id_rsa
-      echo -e "kubevirt:\n type: kubevirt\n namespace: $NAMESPACE" > ~/.kcli/config.yml
+      echo -e "kubevirt:\n type: kubevirt\n namespace: $NAMESPACE\n first_consumer: $FIRSTCONSUMER" > ~/.kcli/config.yml
       echo -ne """cluster_network_ipv4: 10.116.0.0/14
       service_network_ipv4: 172.16.0.0/16
       #kubevirt_ignore_node_port: true  
