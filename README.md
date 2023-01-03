@@ -27,7 +27,7 @@ sed -i "s%CHANGE_PULL_SECRET%$PULL_SECRET%" pipeline.yml
 kubectl create -f pipeline.yml
 ```
 
-Note that the pipeline can easily be extended  with the parameters available [here](https://github.com/karmab/kcli/blob/master/kvirt/openshift/kcli_default.yml)
+Note that the pipeline can easily be extended  with the parameters available [here](https://github.com/karmab/kcli/blob/main/kvirt/openshift/kcli_default.yml)
 
 # Launch a deployment
 
@@ -43,7 +43,7 @@ kubectl create -f pipelinerun.yml
 |domain            |karmalabs.com  |
 |version           |stable         |
 |tag               |4.9            |
-|masters           |3              |
+|ctlplanes         |3              |
 |workers           |0              |
 |numcpus           |8              |
 |memory            |8192           |

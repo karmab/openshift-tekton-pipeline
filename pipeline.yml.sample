@@ -34,8 +34,8 @@ spec:
    description: tag
    type: string
    default: '4.9'
- - name: masters
-   description: masters
+ - name: ctlplanes
+   description: ctlplanes
    type: string
    default: '3'
  - name: workers
@@ -62,6 +62,10 @@ spec:
    description: async
    type: string
    default: 'false'
+ - name: first_consumer
+   description: first_consumer
+   type: string
+   default: 'false'
  steps:
    - name: deploy
      image: "quay.io/karmab/kcli:latest"
@@ -80,8 +84,8 @@ spec:
        value: $(params.version)
      - name: TAG
        value: $(params.tag)
-     - name: MASTERS
-       value: $(params.masters)
+     - name: CTLPLANES
+       value: $(params.ctlplanes)
      - name: WORKERS
        value: $(params.workers)
      - name: NUMCPUS
@@ -94,14 +98,14 @@ spec:
        value: $(params.network_type)
      - name: ASYNC
        value: $(params.async)
+     - name: FIRSTCONSUMER
+       value: $(params.first_consumer)
      - name: BLUE
        value: '\033[0;36m'
      - name: NC
        value: '\033[0m'
      - name: PYTHONUNBUFFERED
        value: "true"
-     - name: FIRSTCONSUMER
-       value: "false"
      script: |
       #!/usr/bin/env bash
       mkdir $HOME/.kcli
@@ -113,8 +117,8 @@ spec:
       #kubevirt_ignore_node_port: true  
       """ > kcli_parameters.yml
       echo $PULL_SECRET > openshift_pull.json
-      echo kcli create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
-      kcli create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P masters="$MASTERS" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
+      echo kcli create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P ctlplanes="$CTLPLANES" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
+      kcli create cluster openshift --force -P version="$VERSION" -P tag="$TAG" -P domain="$DOMAIN" -P ctlplanes="$CTLPLANES" -P workers="$WORKERS" -P numcpus="$NUMCPUS" -P memory="$MEMORY" -P disk_size="$DISK_SIZE" -P network_type="$NETWORK_TYPE" -P async="$ASYNC" $CLUSTER
       cp $HOME/.kcli/clusters/$CLUSTER/auth/kubeadmin-password $(results.kubeadmin-password.path)
       grep $CLUSTER /etc/hosts > $(results.hosts-entry.path)
       echo -e "${BLUE}Kubeconfig to use with this cluster:${NC}"
@@ -155,8 +159,8 @@ spec:
     description: tag
     type: string
     default: '4.9'
-  - name: masters
-    description: masters
+  - name: ctlplanes
+    description: ctlplanes
     type: string
     default: '3'
   - name: workers
@@ -183,6 +187,10 @@ spec:
     description: async
     type: string
     default: 'false'
+  - name: first_consumer
+    description: first_consumer
+    type: string
+    default: 'false'
   tasks:
   - name: deploy-openshift
     taskRef:
@@ -200,8 +208,8 @@ spec:
       value: $(params.version)
     - name: tag
       value: $(params.tag)
-    - name: masters
-      value: $(params.masters)
+    - name: ctlplanes
+      value: $(params.ctlplanes)
     - name: workers
       value: $(params.workers)
     - name: numcpus
@@ -214,3 +222,5 @@ spec:
       value: $(params.network_type)
     - name: async
       value: $(params.async)
+    - name: first_consumer
+      value: $(params.first_consumer)

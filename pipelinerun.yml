@@ -10,13 +10,15 @@ spec:
       value: 'magico'
     - name: async
       value: 'false'
-    - name: masters
+    - name: ctlplanes 
       value: '3'
     - name: workers
       value: '0'
     - name: version
       value: 'stable'
     - name: tag
-      value: '4.10'
+      value: '4.11'
     - name: network_type
       value: 'OpenShiftSDN'
+    - name: first_consumer
+      value: 'true'
